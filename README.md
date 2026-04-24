@@ -1,2 +1,2 @@
 # arraysubanalyzer
-AI-powered array subscription vulnerability analyzer.
+AI-powered array subscript vulnerability analyzer.
