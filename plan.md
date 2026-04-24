@@ -1,3 +1,10 @@
+# 목표
+> 아래 Clang Static Analyzer의 기능들을 일부 구현한다.
+
+- [core.uninitialized.ArraySubscript (C)](https://clang.llvm.org/docs/analyzer/checkers.html#core-uninitialized-arraysubscript-c)
+- [security.ArrayBound (C, C++)](https://clang.llvm.org/docs/analyzer/checkers.html#security-arraybound-c-c)
+- [optin.taint.GenericTaint (C, C++)](https://clang.llvm.org/docs/analyzer/checkers.html#optin-taint-generictaint-c-c)
+
 # gantt chart
 | 기능 | 4월 5주 | 5월 1주 | 5월 2주 | 5월 3주 | 5월 4주 | 6월 1주 | 6월 2주 | 6월 3주 | 6월 4주 | 7월 1주 | 7월 2주 | 7월 3주 | 7월 4주 | 7월 5주 | 8월 1주 | 8월 2주 | 8월 3주 | 8월 4주 | 9월 1주 | 9월 2주 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -31,10 +38,3 @@
   - `p++`, `p + n`까지 추적하지 않는다.
 - taint source: `scanf`, `gets`
   - `scanf("%s")`는 무조건 금지. `scanf("%Ns")` 형태만 허용.
-
-# 참고 자료
-> 아래 Clang Static Analyzer의 기능들을 일부 구현한다.
-
-- [core.uninitialized.ArraySubscript (C)](https://clang.llvm.org/docs/analyzer/checkers.html#core-uninitialized-arraysubscript-c)
-- [security.ArrayBound (C, C++)](https://clang.llvm.org/docs/analyzer/checkers.html#security-arraybound-c-c)
-- [optin.taint.GenericTaint (C, C++)](https://clang.llvm.org/docs/analyzer/checkers.html#optin-taint-generictaint-c-c)
