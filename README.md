@@ -1,2 +1,2 @@
-# arraysubchecker
-Array subscription vulnerability checker.
+# arraysubanalyzer
+AI-powered array subscript vulnerability analyzer.
