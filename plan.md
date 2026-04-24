@@ -32,7 +32,9 @@
 - taint source: `scanf`, `gets`
   - `scanf("%s")`는 무조건 금지. `scanf("%Ns")` 형태만 허용.
 
-# references
+# 참고 자료
+> 아래 Clang Static Analyzer의 기능들을 일부 구현한다.
+
 - [core.uninitialized.ArraySubscript (C)](https://clang.llvm.org/docs/analyzer/checkers.html#core-uninitialized-arraysubscript-c)
 - [security.ArrayBound (C, C++)](https://clang.llvm.org/docs/analyzer/checkers.html#security-arraybound-c-c)
 - [optin.taint.GenericTaint (C, C++)](https://clang.llvm.org/docs/analyzer/checkers.html#optin-taint-generictaint-c-c)
