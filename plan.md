@@ -25,3 +25,14 @@
 | LLM API 연동 구현 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ■ |  |  |
 | 결과 formatting 및 리포트 생성 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ■ |  |
 | 통합 테스트 및 리팩토링 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ■ |
+
+# 비고
+- pointer bound check는 `base + constant offset` 형태만 검사한다.
+  - `p++`, `p + n`까지 추적하지 않는다.
+- taint source: `scanf`, `gets`
+  - `scanf("%s")`는 무조건 금지. `scanf("%Ns")` 형태만 허용.
+
+# references
+- [core.uninitialized.ArraySubscript (C)](https://clang.llvm.org/docs/analyzer/checkers.html#core-uninitialized-arraysubscript-c)
+- [security.ArrayBound (C, C++)](https://clang.llvm.org/docs/analyzer/checkers.html#security-arraybound-c-c)
+- [optin.taint.GenericTaint (C, C++)](https://clang.llvm.org/docs/analyzer/checkers.html#optin-taint-generictaint-c-c)
