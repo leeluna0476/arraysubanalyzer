@@ -66,9 +66,16 @@ class ImplicitCastExpr(Expr):
 class DeclRefExpr(Expr):
     _kind = 'DeclRefExpr'
 
+    # 모든 reference에 대해 VarDecl 새로 생성하는 게 아니라...
+    # VarDecl은 각 변수에 대해 하나씩만 존재하고
+    # DeclRefExpr은 그걸 alias하는 방식으로 바꾸자.
     def __init__(self, idata=None):
         super().__init__(idata)
-        self._referenced_decl = VarDecl(self._data['referencedDecl'])
+        ref_decl_id = self._data['referencedDecl']['id']
+        if VarDecl.exist(ref_decl_id):
+            self._referenced_decl = VarDecl.existing_obj(ref_decl_id)
+        else:
+            self._referenced_decl = VarDecl(self._data['referencedDecl'])
 
     @property
     def referenced_decl(self):
