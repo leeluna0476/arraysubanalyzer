@@ -18,7 +18,7 @@ class Expr:
 
     @property
     def inner(self):
-        return self._data.get('inner')
+        return self._data.get('inner', [])
 
     @property
     def qualtype(self):
