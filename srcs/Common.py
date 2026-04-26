@@ -28,7 +28,7 @@ class Common:
 
     @property
     def inner(self):
-        return self._data.get('inner', [])
+        return tuple(self._data.get('inner', []))
 
     @property
     def qualtype(self):
