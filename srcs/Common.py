@@ -67,5 +67,5 @@ class Common:
     def listup_from_parentlist(cls, parent_list):
         l = []
         for d in parent_list:
-            l += cls.listup_obj(d.data)
+            l.extend(cls.listup_obj(d.data))
         return l
