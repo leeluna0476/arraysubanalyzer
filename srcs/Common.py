@@ -1,5 +1,8 @@
+from types import MappingProxyType
+
 class Common:
     _kind = 'Common'
+    _registry = {}
 
     def __init__(self, idata=None):
         self._data = idata or {}
@@ -25,6 +28,10 @@ class Common:
     @property
     def qualtype(self):
         return self._data.get('type', {}).get('qualType')
+
+    @classmethod
+    def registry_view(cls):
+        return MappingProxyType(cls._registry)
 
     @classmethod
     def get_obj(cls, cid):
