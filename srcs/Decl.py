@@ -1,5 +1,6 @@
 from Common import Common
 from Stmt import DeclStmt
+from ASTNode import ASTNode
 
 class Decl(Common):
     _kind = 'Decl'
@@ -23,20 +24,3 @@ class VarDecl(Decl):
     @property
     def initialized(self):
         return self._initialized
-
-    # create a VarDecl object with cid under DeclStmt
-    # does not create the other objects unlike listup_obj
-    @classmethod
-    def get_by_id(cls, cid):
-        obj = cls.get_obj(cid)
-        if not obj:
-            declstmt_objs = DeclStmt.registry_view().values()
-            for o in declstmt_objs:
-                l = cls.listup_data(o.data)
-                for d in l:
-                    if d['id'] == cid:
-                        obj = cls(d)
-                        break
-                if obj:
-                    break
-        return obj

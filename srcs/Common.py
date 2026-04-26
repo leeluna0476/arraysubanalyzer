@@ -1,4 +1,5 @@
 from types import MappingProxyType
+from ASTNode import ASTNode
 
 class Common:
     _kind = 'Common'
@@ -18,6 +19,10 @@ class Common:
         return str(self._data)
 
     @property
+    def id(self):
+        return self._id
+
+    @property
     def data(self):
         return self._data
 
@@ -35,37 +40,41 @@ class Common:
 
     @classmethod
     def get_obj(cls, cid):
-        return cls._registry.get(cid)
+        obj = cls._registry.get(cid)
+        if not obj:
+            obj = cls(ASTNode.get_node(cid))
+        return obj
 
     @classmethod
     def _listup_data(cls, idata, l):
-        if idata['kind'] == cls._kind:
+        if cls._kind == idata['kind']:
             l.append(idata)
-        elif 'inner' in idata:
+        if 'inner' in idata:
             for d in idata['inner']:
                 cls._listup_data(d, l)
 
-    # data -> cls data list
-    # extract cls datas from a single dict data
+    # listup the nodes of a specific kind (cls)
     @classmethod
-    def listup_data(cls, idata: dict):
+    def listup_data(cls, cid=None):
+        if cid:
+            nodes = ASTNode.get_node(cid)
+        else:
+            nodes = ASTNode.raw_view()
         l = []
-        if 'kind' in idata:
-            cls._listup_data(idata, l)
+        cls._listup_data(nodes, l)
         return l
 
-    # data -> cls obj list
-    # extract cls objs from a single dict data
+    # list up the cls objects from the whole ast data
     @classmethod
-    def listup_obj(cls, idata: dict):
-        data_list = cls.listup_data(idata)
-        return [cls.get_obj(data['id']) or cls(data) for data in data_list]
+    def listup_obj(cls, cid=None):
+        data_list = cls.listup_data(cid)
+        return [cls.get_obj(data['id']) for data in data_list]
 
     # integrated cls obj list from a given parent list
     # -> extract cls objs from multiple objects (multiple dict data)
     @classmethod
-    def listup_from_parentlist(cls, parent_list):
+    def listup_obj_under_parent(cls, parent_list):
         l = []
         for d in parent_list:
-            l.extend(cls.listup_obj(d.data))
+            l.extend(cls.listup_obj(d.id))
         return l

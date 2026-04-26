@@ -18,7 +18,7 @@ class DeclRefExpr(Expr):
 
     def __init__(self, idata=None):
         super().__init__(idata)
-        self._referenced_decl = VarDecl.get_by_id(self._data['referencedDecl']['id'])
+        self._referenced_decl = VarDecl.get_obj(self._data['referencedDecl']['id'])
 
     @property
     def referenced_decl(self):
