@@ -8,15 +8,21 @@ from ASTNode import ASTNode
 
 ASTNode.register_rawdata(json.loads(sys.stdin.read()))
 
-bo_list = filter(lambda x: x.qualtype == 'int',\
+# add more later
+integer_types = {'unsigned char', 'char', 'unsigned short', 'short',\
+        'unsigned int', 'int', 'unsigned long', 'long',\
+        'unsigned long long', 'long long'}
+
+bo_list = filter(lambda x: x.qualtype in integer_types,\
         BinaryOperator.listup_obj())
+
 ase_list = ArraySubscriptExpr.listup_obj()
 
 var_dict = {}
 for bo in bo_list:
     dre_list = filter(lambda x: not x.referenced_decl.initialized,\
             filter(lambda x: x.value_category == 'lvalue',\
-                      DeclRefExpr.listup_obj(bo.id)))
+                      DeclRefExpr.listup_obj(bo.id, level=1)))
     for dre in dre_list:
         vid = dre.referenced_decl.id
         if vid in var_dict:
@@ -26,7 +32,7 @@ for bo in bo_list:
 
 for ase in ase_list:
     dre_list = filter(lambda x: not x.referenced_decl.initialized,\
-            filter(lambda x: x.qualtype == 'int',\
+            filter(lambda x: x.qualtype in integer_types,\
             filter(lambda x: x.value_category == 'lvalue',\
                    DeclRefExpr.listup_obj(ase.id))))
     for dre in dre_list:
