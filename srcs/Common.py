@@ -34,6 +34,14 @@ class Common:
     def qualtype(self):
         return self._data.get('type', {}).get('qualType')
 
+    @property
+    def value_category(self):
+        return self._data.get('valueCategory')
+
+    @property
+    def line(self):
+        return self._data.get('range', {}).get('begin', {}).get('line')
+
     @classmethod
     def registry_view(cls):
         return MappingProxyType(cls._registry)
