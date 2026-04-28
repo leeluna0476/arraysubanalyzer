@@ -3,18 +3,57 @@ import json
 from Expr import ArraySubscriptExpr, ImplicitCastExpr, DeclRefExpr
 from Decl import VarDecl
 from Stmt import DeclStmt
-from asttools import filter_by_qualtype
+from Operator import BinaryOperator
 from ASTNode import ASTNode
 
-s = sys.stdin.read()
-data = json.loads(s)
-ASTNode.register_rawdata(data)
+ASTNode.register_rawdata(json.loads(sys.stdin.read()))
 
+bo_list = filter(lambda x: x.qualtype == 'int',\
+        BinaryOperator.listup_obj())
 ase_list = ArraySubscriptExpr.listup_obj()
-dre_list = DeclRefExpr.listup_obj_under_parent(ase_list)
-var_list = DeclRefExpr.listup_referenced_decl(dre_list)
-var_set = set(var_list)
-var_int_list = filter_by_qualtype(var_list, 'int')
 
-for v in var_set:
-    print(f'id={id(v)}, name={v.name}, initialized={v.initialized}')
+var_dict = {}
+for bo in bo_list:
+    dre_list = filter(lambda x: not x.referenced_decl.initialized,\
+            filter(lambda x: x.value_category == 'lvalue',\
+                      DeclRefExpr.listup_obj(bo.id)))
+    for dre in dre_list:
+        vid = dre.referenced_decl.id
+        if vid in var_dict:
+            var_dict[vid].append(bo)
+        else:
+            var_dict[vid] = [bo]
+
+for ase in ase_list:
+    dre_list = filter(lambda x: not x.referenced_decl.initialized,\
+            filter(lambda x: x.qualtype == 'int',\
+            filter(lambda x: x.value_category == 'lvalue',\
+                   DeclRefExpr.listup_obj(ase.id))))
+    for dre in dre_list:
+        vid = dre.referenced_decl.id
+        if vid in var_dict:
+            var_dict[vid].append(ase)
+        else:
+            var_dict[vid] = [ase]
+
+with open('array_subscript_by_uninitialized_variable.csv', 'w', encoding='utf-8') as f:
+    f.write('line\n')
+    problematic_lines = []
+
+    for k, v in var_dict.items():
+        v.sort(key=lambda x: x.line)
+
+        print('key:', ASTNode.get_node(k)['name'])
+        for e in v:
+            print(e.id, type(e), e.line)
+
+        limit = len(v)
+        for i in range(len(v)):
+            if type(v[i]) == BinaryOperator:
+                limit = i
+                break
+
+        problematic_lines.extend([v[j].line for j in range(limit)])
+
+    output = sorted([f'{l}\n' for l in problematic_lines])
+    f.writelines(output)
