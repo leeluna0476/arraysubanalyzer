@@ -54,28 +54,28 @@ class Common:
         return obj
 
     @classmethod
-    def _listup_data(cls, idata, l):
+    def _listup_data(cls, idata, l, level, cur):
         if cls._kind == idata['kind']:
             l.append(idata)
-        if 'inner' in idata:
+        if (not level or cur < level) and 'inner' in idata:
             for d in idata['inner']:
-                cls._listup_data(d, l)
+                cls._listup_data(d, l, level, cur + 1)
 
     # listup the nodes of a specific kind (cls)
     @classmethod
-    def listup_data(cls, cid=None):
+    def listup_data(cls, cid=None, level=0):
         if cid:
             nodes = ASTNode.get_node(cid)
         else:
             nodes = ASTNode.raw_view()
         l = []
-        cls._listup_data(nodes, l)
+        cls._listup_data(nodes, l, level, 0)
         return l
 
     # list up the cls objects from the whole ast data
     @classmethod
-    def listup_obj(cls, cid=None):
-        data_list = cls.listup_data(cid)
+    def listup_obj(cls, cid=None, level=0):
+        data_list = cls.listup_data(cid, level)
         return [cls.get_obj(data['id']) for data in data_list]
 
     # integrated cls obj list from a given parent list
