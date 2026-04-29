@@ -57,5 +57,5 @@ with open('array_subscript_by_uninitialized_variable.csv', 'w', encoding='utf-8'
 
         problematic_lines.extend([v[j].line for j in range(limit)])
 
-    output = sorted([f'{l}\n' for l in problematic_lines])
+    output = [f'{l}\n' for l in sorted(problematic_lines)]
     f.writelines(output)
