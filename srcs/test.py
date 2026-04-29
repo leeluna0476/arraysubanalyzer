@@ -13,34 +13,30 @@ integer_types = {'unsigned char', 'char', 'unsigned short', 'short',\
         'unsigned int', 'int', 'unsigned long', 'long',\
         'unsigned long long', 'long long'}
 
-bo_list = filter(lambda x: x.qualtype in integer_types and x.opcode == '=',\
-        BinaryOperator.listup_obj())
+bo_list = [x for x in BinaryOperator.listup_obj()\
+        if x.qualtype in integer_types\
+        and x.opcode == '=']
 
 ase_list = ArraySubscriptExpr.listup_obj()
 
 var_dict = {}
 for bo in bo_list:
-    dre_list = filter(lambda x: not x.referenced_decl.initialized,\
-            filter(lambda x: x.value_category == 'lvalue',\
-                      DeclRefExpr.listup_obj(bo.id, level=1)))
+    dre_list = [x for x in DeclRefExpr.listup_obj(bo.id, level=1)\
+            if x.value_category == 'lvalue'\
+            and not x.referenced_decl.initialized]
     for dre in dre_list:
         vid = dre.referenced_decl.id
-        if vid in var_dict:
-            var_dict[vid].append(bo)
-        else:
-            var_dict[vid] = [bo]
+        var_dict.setdefault(vid, []).append(bo)
 
 for ase in ase_list:
-    dre_list = filter(lambda x: not x.referenced_decl.initialized,\
-            filter(lambda x: x.qualtype in integer_types,\
-            filter(lambda x: x.value_category == 'lvalue',\
-                   DeclRefExpr.listup_obj(ase.id))))
+    dre_list = [x for x in DeclRefExpr.listup_obj(ase.id)\
+            if x.value_category == 'lvalue'\
+            and x.qualtype in integer_types\
+            and not x.referenced_decl.initialized]
+
     for dre in dre_list:
         vid = dre.referenced_decl.id
-        if vid in var_dict:
-            var_dict[vid].append(ase)
-        else:
-            var_dict[vid] = [ase]
+        var_dict.setdefault(vid, []).append(ase)
 
 with open('array_subscript_by_uninitialized_variable.csv', 'w', encoding='utf-8') as f:
     f.write('line\n')
@@ -54,8 +50,8 @@ with open('array_subscript_by_uninitialized_variable.csv', 'w', encoding='utf-8'
             print(e.id, type(e), e.line)
 
         limit = len(v)
-        for i in range(len(v)):
-            if isinstance(v[i], BinaryOperator):
+        for i, n in enumerate(v):
+            if isinstance(n, BinaryOperator):
                 limit = i
                 break
 
