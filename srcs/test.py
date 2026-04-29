@@ -13,7 +13,7 @@ integer_types = {'unsigned char', 'char', 'unsigned short', 'short',\
         'unsigned int', 'int', 'unsigned long', 'long',\
         'unsigned long long', 'long long'}
 
-bo_list = filter(lambda x: x.qualtype in integer_types,\
+bo_list = filter(lambda x: x.qualtype in integer_types and x.opcode == '=',\
         BinaryOperator.listup_obj())
 
 ase_list = ArraySubscriptExpr.listup_obj()
@@ -55,7 +55,7 @@ with open('array_subscript_by_uninitialized_variable.csv', 'w', encoding='utf-8'
 
         limit = len(v)
         for i in range(len(v)):
-            if type(v[i]) == BinaryOperator:
+            if isinstance(v[i], BinaryOperator):
                 limit = i
                 break
 
