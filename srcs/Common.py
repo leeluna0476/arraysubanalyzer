@@ -42,6 +42,10 @@ class Common:
     def line(self):
         return self._data.get('range', {}).get('begin', {}).get('line')
 
+    @property
+    def col(self):
+        return self._data.get('range', {}).get('begin', {}).get('col')
+
     @classmethod
     def registry_view(cls):
         return MappingProxyType(cls._registry)

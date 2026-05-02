@@ -14,7 +14,9 @@ ASTNode.register_rawdata(json.loads(sys.stdin.read()))
 
 declstmt_list = DeclStmt.listup_obj()
 bo_list = [bo for bo in BinaryOperator.listup_obj() if bo.opcode == '=']
-declstmt_bo = sorted(declstmt_list + bo_list, key=lambda x: x.line)
+declstmt_bo = declstmt_list + bo_list
+declstmt_bo.sort(reverse=True, key=lambda x: x.col)
+declstmt_bo.sort(key=lambda x: x.line)
 for x in declstmt_bo:
     if isinstance(x, DeclStmt):
         vardecl_list = VarDecl.listup_obj(x.id)
@@ -26,19 +28,20 @@ for x in declstmt_bo:
                     if not dre.referenced_decl.initialized:
                         v.set_initialized(False)
                         break
-            print(x.line, v.name, v.initialized)
+            print(f'({x.line},{x.col}), {v.name}, {v.initialized}')
     else:
-        lvalue_list = DeclRefExpr.listup_obj(x.id, level=1)
-        ice_list = [ice for ice in ImplicitCastExpr.listup_obj(x.id) if ice.qualtype in integer_types]
-        rvalue_list = DeclRefExpr.listup_obj_under_parent(ice_list)
+        dre_list = DeclRefExpr.listup_obj(x.id)
+        # 문제: lvalue가 무조건 dre인 것은 아니다.
+        #       ArraySubscriptExpr일수도... kind가 아닌 valueCategory를 보고 뽑아내야 한다.
+        lvalue = [dre for dre in dre_list if dre.value_category == 'lvalue'][0]
         init = True
-        for rv in rvalue_list:
-            if not rv.referenced_decl.initialized:
+        for dre in dre_list:
+            if dre is not lvalue and not dre.referenced_decl.initialized:
                 init = False
                 break
-        for lv in lvalue_list:
-            lv.referenced_decl.set_initialized(init)
-            print(x.line, lv.referenced_decl.name, lv.referenced_decl.initialized)
+        lvalue.referenced_decl.set_initialized(init)
+        v = lvalue.referenced_decl
+        print(f'({x.line},{x.col}), {v.name}, {v.initialized}')
 
 ## add more later
 #
