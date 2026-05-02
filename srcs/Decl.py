@@ -1,5 +1,4 @@
 from Common import Common
-from Stmt import DeclStmt
 from ASTNode import ASTNode
 
 class Decl(Common):
@@ -11,10 +10,7 @@ class VarDecl(Decl):
 
     def __init__(self, idata=None):
         super().__init__(idata)
-        if 'init' in self._data:
-            self._initialized = True
-        else:
-            self._initialized = False
+        self._initialized = 'init' in self._data
     
     # a c variable always has a name
     @property
@@ -24,3 +20,6 @@ class VarDecl(Decl):
     @property
     def initialized(self):
         return self._initialized
+
+    def set_initialized(self, init):
+        self._initialized = init

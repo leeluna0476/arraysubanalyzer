@@ -11,7 +11,7 @@ class ASTNode:
     @classmethod
     def raw_view(cls):
         return MappingProxyType(cls._raw)
-    
+
     @classmethod
     def register_rawdata(cls, rawdata, pline=0):
         if not cls._raw:
