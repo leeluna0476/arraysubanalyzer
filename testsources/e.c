@@ -3,6 +3,6 @@ int	main(void) {
 	int c = a + b + d;
 	char arr[100];
 	arr[c] = 1;
-//
-//	c = a + b;
+
+	c = a + d;
 }
