@@ -30,16 +30,18 @@ for x in declstmt_bo:
                         break
             print(f'({x.line},{x.col}), {v.name}, {v.initialized}')
     else:
-        dre_list = DeclRefExpr.listup_obj(x.id)
-        lvalue = DeclRefExpr.listup_obj_under_parent(x.listup_by_kv('valueCategory', 'lvalue'))[0]
-        init = True
-        for dre in dre_list:
-            if dre is not lvalue and not dre.referenced_decl.initialized:
-                init = False
-                break
-        lvalue.referenced_decl.set_initialized(init)
-        v = lvalue.referenced_decl
-        print(f'({x.line},{x.col}), {v.name}, {v.initialized}')
+        lvalue_list = DeclRefExpr.listup_obj_under_parent(x.listup_by_kv('valueCategory', 'lvalue'))
+        lvalue = lvalue_list[0] if lvalue_list else None
+        if lvalue:
+            dre_list = DeclRefExpr.listup_obj_under_parent(x.listup_by_kv('valueCategory', 'prvalue'))
+            init = True
+            for dre in dre_list:
+                if not dre.referenced_decl.initialized:
+                    init = False
+                    break
+            lvalue.referenced_decl.set_initialized(init)
+            v = lvalue.referenced_decl
+            print(f'({x.line},{x.col}), {v.name}, {v.initialized}')
 
 ## add more later
 #

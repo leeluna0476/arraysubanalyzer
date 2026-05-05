@@ -102,5 +102,6 @@ class Common:
                 cid = d.get('id')
                 kind = d.get('kind')
                 cls = self._ASTcls.get(kind)
-                l.append(cls.get_obj(cid))
+                if cls:
+                    l.append(cls.get_obj(cid))
         return l
