@@ -4,6 +4,10 @@ from ASTNode import ASTNode
 class Common:
     _kind = 'Common'
     _registry = {}
+    _ASTcls = {}
+
+    def __init_subclass__(cls):
+        Common._ASTcls[cls._kind] = cls
 
     def __init__(self, idata=None):
         self._data = idata or {}
@@ -89,4 +93,14 @@ class Common:
         l = []
         for d in parent_list:
             l.extend(cls.listup_obj(d.id))
+        return l
+
+    def listup_by_kv(self, key, value):
+        l = []
+        for d in self.inner:
+            if d.get(key) == value:
+                cid = d.get('id')
+                kind = d.get('kind')
+                cls = self._ASTcls.get(kind)
+                l.append(cls.get_obj(cid))
         return l

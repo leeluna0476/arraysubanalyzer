@@ -31,9 +31,7 @@ for x in declstmt_bo:
             print(f'({x.line},{x.col}), {v.name}, {v.initialized}')
     else:
         dre_list = DeclRefExpr.listup_obj(x.id)
-        # 문제: lvalue가 무조건 dre인 것은 아니다.
-        #       ArraySubscriptExpr일수도... kind가 아닌 valueCategory를 보고 뽑아내야 한다.
-        lvalue = [dre for dre in dre_list if dre.value_category == 'lvalue'][0]
+        lvalue = DeclRefExpr.listup_obj_under_parent(x.listup_by_kv('valueCategory', 'lvalue'))[0]
         init = True
         for dre in dre_list:
             if dre is not lvalue and not dre.referenced_decl.initialized:
